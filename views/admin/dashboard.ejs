@@ -1,7 +1,28 @@
 <%- include('../partials/header') %>
 <div class="container admin-panel fade-in">
-    <h2>Panel de Administración</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Panel de Administración</h2>
+        <a href="/admin/logout" class="btn" style="background: #333; font-size: 0.8rem;">Cerrar Sesión</a>
+    </div>
+
+    <div style="background: #fff0f5; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #ffdeeb;">
+        <h3 style="color: var(--secondary);">🎨 Personalizar Diseño (Header)</h3>
+        <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+            <form action="/admin/subir-logo" method="POST" enctype="multipart/form-data" style="flex: 1;">
+                <label style="font-weight: bold;">Subir Logo (logo.png)</label>
+                <input type="file" name="logo" accept="image/png, image/jpeg" required>
+                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem;">Actualizar Logo</button>
+            </form>
+            <form action="/admin/subir-banner" method="POST" enctype="multipart/form-data" style="flex: 1;">
+                <label style="font-weight: bold;">Subir Banner (banner.png)</label>
+                <input type="file" name="banner" accept="image/png, image/jpeg" required>
+                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem;">Actualizar Banner</button>
+            </form>
+        </div>
+    </div>
     
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
     <form action="/admin/crear" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
         <h3>Agregar Producto</h3>
         <input type="text" name="modelo" placeholder="Modelo" required>
@@ -19,7 +40,7 @@
                 <option value="otros">Otros</option>
             </select>
         </div>
-        <input type="text" name="imagenUrl" placeholder="URL de la imagen">
+        <input type="text" name="imagenUrl" placeholder="URL de la imagen del producto">
         <button type="submit" class="btn">Guardar Producto</button>
     </form>
 

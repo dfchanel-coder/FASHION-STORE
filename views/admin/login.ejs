@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Admin | Fashion Store</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fdfbfd; }
+        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .error { color: red; margin-bottom: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="login-box fade-in">
+        <h2 style="color: var(--primary);">Seguridad FB</h2>
+        <p>Fashion Store Administración</p>
+        
+        <% if (error) { %>
+            <p class="error"><%= error %></p>
+        <% } %>
+
+        <form action="/admin/login" method="POST">
+            <input type="password" name="password" placeholder="Ingrese la contraseña..." required>
+            <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+        </form>
+        <p style="margin-top: 20px;"><a href="/" style="font-size: 0.8rem; color: #888;">← Volver a la tienda</a></p>
+    </div>
+</body>
+</html>
