@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+<div class="container" style="min-height: 60vh; padding-top: 50px;">
+    <h2>Tu Carrito de Compras</h2>
+    <% if(carrito.length > 0) { %>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 10px;">Producto</th>
+                <th style="padding: 10px;">Cant.</th>
+                <th style="padding: 10px;">Precio</th>
+            </tr>
+            <% carrito.forEach(item => { %>
+                <tr>
+                    <td style="padding: 10px;"><%= item.title %></td>
+                    <td style="padding: 10px; text-align: center;"><%= item.cantidad %></td>
+                    <td style="padding: 10px; text-align: center;">$<%= item.unit_price * item.cantidad %></td>
+                </tr>
+            <% }) %>
+        </table>
+        <form action="/checkout" method="POST">
+            <button type="submit" class="btn" style="width: 100%;">Pagar con Mercado Pago</button>
+        </form>
+    <% } else { %>
+        <p>El carrito está vacío.</p>
+        <a href="/" class="btn">Volver a la tienda</a>
+    <% } %>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                
+                <nav class="main-nav">
+                    <div class="logo">
+                        <a href="/">Fashion **Store**</a>
+                    </div>
+                    <div class="nav-links">
+                        <a href="/">Inicio</a>
+                        <a href="/productos">Tienda</a>
+                        <a href="/nosotros">Nosotros</a>
+                        <a href="/contacto">Contacto</a>
+                        <a href="/admin">Admin</a>
+                    </div>
+                </nav>
+                
+                <div class="icon-links">
+                    <a href="/carrito" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count"><%= cartItemCount %></span>
+                    </a>
+                    <a href="URL_INSTAGRAM" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="URL_FACEBOOK" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/NUMERO_WP" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <%- body %>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <%= new Date().getFullYear() %> Fashion Store. Todos los derechos reservados.</p>
+            <p>Desarrollado por FB Informática</p>
+        </div>
+    </footer>
+
+</body>
+</html>

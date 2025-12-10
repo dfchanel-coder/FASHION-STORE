@@ -1,0 +1,22 @@
+# Dependencias de Node (esto se instala solo en el servidor)
+node_modules/
+
+# Variables de entorno y claves secretas (¡SEGURIDAD!)
+.env
+
+# Base de datos local de prueba (no la subas a producción)
+*.sqlite
+database.sqlite
+
+# Logs de errores y debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos basura del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Carpetas de configuración de editores (VS Code, etc.)
+.vscode/
+.idea/

@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<div class="hero">
+    <div class="container fade-in">
+        <h1>Moda que Inspira</h1>
+        <p>Descubre nuestra colección minimalista y elegante.</p>
+        <a href="#catalogo" class="btn">Ver Colección</a>
+    </div>
+</div>
+
+<main class="container" id="catalogo">
+    <h2 class="fade-in" style="text-align: center; margin-top: 50px;">Novedades</h2>
+    
+    <div class="grid">
+        <% productos.forEach(prod => { %>
+            <div class="card fade-in">
+                <img src="<%= prod.imagenUrl || 'https://via.placeholder.com/300' %>" alt="<%= prod.modelo %>">
+                <h3><%= prod.modelo %></h3>
+                <p style="font-size: 0.9rem; color: #777;"><%= prod.categoria.toUpperCase() %> | <%= prod.tamaño %></p>
+                <div class="price">$<%= prod.precio %></div>
+                <form action="/carrito/agregar" method="POST">
+                    <input type="hidden" name="id" value="<%= prod.id %>">
+                    <button type="submit" class="btn" style="width:100%; font-size: 0.8rem;">Añadir al Carrito</button>
+                </form>
+            </div>
+        <% }) %>
+    </div>
+</main>
+
+<%- include('partials/footer') %>
