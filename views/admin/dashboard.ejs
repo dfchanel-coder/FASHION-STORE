@@ -19,18 +19,18 @@
         <div class="form-grid">
             <form action="/admin/subir-logo" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label><strong>Actualizar Logo</strong> (Recomendado: PNG fondo transparente)</label>
+                    <label><strong>Logo</strong></label>
                     <input type="file" name="logo" accept="image/png, image/jpeg" required>
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Subir Logo</button>
+                <button type="submit" class="btn" style="width: 100%;">Subir</button>
             </form>
 
             <form action="/admin/subir-banner" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label><strong>Actualizar Banner</strong> (Imagen ancha para el fondo)</label>
+                    <label><strong>Banner</strong></label>
                     <input type="file" name="banner" accept="image/png, image/jpeg" required>
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Subir Banner</button>
+                <button type="submit" class="btn" style="width: 100%;">Subir</button>
             </form>
         </div>
     </div>
@@ -39,21 +39,21 @@
         <h3><i class="fas fa-plus-circle"></i> Nuevo Producto</h3>
         <form action="/admin/crear" method="POST">
             <div class="form-grid">
-                <input type="text" name="modelo" placeholder="Modelo / Nombre del Producto" required>
-                <input type="text" name="imagenUrl" placeholder="URL de la imagen (Ej: https://...)" required>
+                <input type="text" name="modelo" placeholder="Modelo / Nombre" required>
+                <input type="text" name="imagenUrl" placeholder="URL Imagen" required>
             </div>
             
-            <textarea name="descripcion" placeholder="Descripción del producto..." rows="2" style="margin-top: 15px;"></textarea>
+            <textarea name="descripcion" placeholder="Descripción..." rows="2" style="margin-top: 15px;"></textarea>
 
             <div class="form-grid" style="margin-top: 15px; grid-template-columns: 1fr 1fr 1fr;">
-                <input type="number" name="precio" step="0.01" placeholder="Precio ($)" required>
+                <input type="number" name="precio" step="0.01" placeholder="Precio" required>
                 <input type="number" name="stock" placeholder="Stock" value="1">
-                <input type="text" name="tamaño" placeholder="Talle (S, M, L)">
+                <input type="text" name="tamaño" placeholder="Talle">
             </div>
 
             <div style="margin-top: 15px;">
                 <select name="categoria" required>
-                    <option value="" disabled selected>Seleccione Categoría...</option>
+                    <option value="" disabled selected>Categoría...</option>
                     <option value="ropa">Ropa</option>
                     <option value="juguete">Juguete</option>
                     <option value="electrodomesticos">Electrodomésticos</option>
@@ -87,17 +87,22 @@
                             </td>
                             <td>
                                 <strong><%= p.modelo %></strong>
-                                <div style="font-size: 0.8rem; color: #888;"><%= p.tamaño %></div>
+                                <div style="font-size: 0.8rem; color: #888;"><%= p.tamaño || '-' %></div>
                             </td>
                             <td><span style="background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;"><%= p.categoria %></span></td>
                             <td style="font-weight: bold; color: var(--secondary);">$<%= p.precio %></td>
                             <td><%= p.stock %></td>
                             <td>
-                                <form action="/admin/eliminar/<%= p.id %>" method="POST" onsubmit="return confirm('¿Borrar?');">
-                                    <button style="background: #ff6b6b; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div style="display: flex; gap: 5px;">
+                                    <a href="/admin/editar/<%= p.id %>" style="background: #3498db; color: white; padding: 6px 10px; border-radius: 4px;">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <form action="/admin/eliminar/<%= p.id %>" method="POST" onsubmit="return confirm('¿Borrar?');" style="margin: 0;">
+                                        <button style="background: #ff6b6b; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     <% }) %>

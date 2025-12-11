@@ -1,30 +1,62 @@
 <%- include('partials/header') %>
 
-<div class="hero">
-    <div class="container fade-in">
-        <h1>Moda que Inspira</h1>
-        <p>Descubre nuestra colección minimalista y elegante.</p>
-        <a href="#catalogo" class="btn">Ver Colección</a>
-    </div>
-</div>
-
-<main class="container" id="catalogo">
-    <h2 class="fade-in" style="text-align: center; margin-top: 50px;">Novedades</h2>
-    
-    <div class="grid">
-        <% productos.forEach(prod => { %>
-            <div class="card fade-in">
-                <img src="<%= prod.imagenUrl || 'https://via.placeholder.com/300' %>" alt="<%= prod.modelo %>">
-                <h3><%= prod.modelo %></h3>
-                <p style="font-size: 0.9rem; color: #777;"><%= prod.categoria.toUpperCase() %> | <%= prod.tamaño %></p>
-                <div class="price">$<%= prod.precio %></div>
-                <form action="/carrito/agregar" method="POST">
-                    <input type="hidden" name="id" value="<%= prod.id %>">
-                    <button type="submit" class="btn" style="width:100%; font-size: 0.8rem;">Añadir al Carrito</button>
-                </form>
+<main>
+    <% if (novedades && novedades.length > 0) { %>
+        <section class="slider-section fade-in">
+            <div class="slider-container">
+                <% novedades.forEach((nov, index) => { %>
+                    <div class="slide fade <%= index === 0 ? 'active' : '' %>">
+                        <img src="<%= nov.imagenUrl || '/images/logo.png' %>" alt="<%= nov.modelo %>" class="slide-img">
+                        <div class="slide-content">
+                            <span class="new-badge">Novedad</span>
+                            <h2><%= nov.modelo %></h2>
+                            <p class="slide-price">$<%= nov.precio %></p>
+                        </div>
+                    </div>
+                <% }) %>
             </div>
-        <% }) %>
-    </div>
+        </section>
+    <% } %>
+
+    <section id="catalogo" class="container" style="padding: 50px 0;">
+        <h2 class="section-title">Colección Completa</h2>
+        
+        <div class="grid">
+            <% productos.forEach(prod => { %>
+                <div class="card fade-in">
+                    <div class="card-img-container">
+                        <img src="<%= prod.imagenUrl || '/images/logo.png' %>" alt="<%= prod.modelo %>">
+                        <span class="cat-badge"><%= prod.categoria %></span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h3><%= prod.modelo %></h3>
+                        <p class="size-text"><%= prod.tamaño || 'Talle Único' %></p>
+                        <div class="price">$<%= prod.precio %></div>
+                        
+                        <form action="/carrito/agregar" method="POST">
+                            <input type="hidden" name="id" value="<%= prod.id %>">
+                            <button type="submit" class="btn btn-compact">
+                                <i class="fas fa-shopping-cart"></i> Agregar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </section>
 </main>
+
+<script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length > 0) {
+        setInterval(() => {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }, 4000); 
+    }
+</script>
 
 <%- include('partials/footer') %>

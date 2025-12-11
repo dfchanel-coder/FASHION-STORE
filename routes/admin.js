@@ -45,31 +45,63 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Rutas Productos
+// --- GESTIÓN DE PRODUCTOS ---
+
+// Dashboard (Listado)
 router.get('/', authMiddleware, async (req, res) => {
     const productos = await Producto.findAll({ order: [['createdAt', 'DESC']] });
     res.render('admin/dashboard', { productos });
 });
+
+// Crear
 router.post('/crear', authMiddleware, async (req, res) => {
     await Producto.create(req.body);
     res.redirect('/admin');
 });
+
+// NUEVO: Formulario de Edición
+router.get('/editar/:id', authMiddleware, async (req, res) => {
+    try {
+        const producto = await Producto.findByPk(req.params.id);
+        if (!producto) return res.redirect('/admin');
+        res.render('admin/editar', { producto });
+    } catch (error) {
+        console.error(error);
+        res.redirect('/admin');
+    }
+});
+
+// NUEVO: Procesar Edición
+router.post('/editar/:id', authMiddleware, async (req, res) => {
+    try {
+        const { modelo, descripcion, precio, stock, tamaño, categoria, imagenUrl } = req.body;
+        await Producto.update(
+            { modelo, descripcion, precio, stock, tamaño, categoria, imagenUrl },
+            { where: { id: req.params.id } }
+        );
+        res.redirect('/admin');
+    } catch (error) {
+        console.error(error);
+        res.send('Error al actualizar');
+    }
+});
+
+// Eliminar
 router.post('/eliminar/:id', authMiddleware, async (req, res) => {
     await Producto.destroy({ where: { id: req.params.id } });
     res.redirect('/admin');
 });
 
-// Rutas Imágenes
+// --- GESTIÓN DE IMÁGENES ---
 router.post('/subir-logo', authMiddleware, upload.single('logo'), (req, res) => res.redirect('/admin'));
 router.post('/subir-banner', authMiddleware, upload.single('banner'), (req, res) => res.redirect('/admin'));
 
-// RUTAS DE ÓRDENES
+// --- GESTIÓN DE ÓRDENES ---
 router.get('/ordenes', authMiddleware, async (req, res) => {
     const ordenes = await Orden.findAll({ order: [['createdAt', 'DESC']] });
     res.render('admin/ordenes', { ordenes });
 });
 
-// RUTA NUEVA: Ver Detalle Orden
 router.get('/ordenes/:id', authMiddleware, async (req, res) => {
     try {
         const orden = await Orden.findByPk(req.params.id);
@@ -90,8 +122,6 @@ router.get('/ordenes/:id', authMiddleware, async (req, res) => {
 
 router.post('/ordenes/estado/:id', authMiddleware, async (req, res) => {
     await Orden.update({ estado: req.body.nuevoEstado }, { where: { id: req.params.id } });
-    
-    // Si venimos del detalle, volvemos al detalle. Si no, a la lista.
     const referer = req.get('Referer');
     if (referer && referer.includes('/ordenes/')) {
         res.redirect(`/admin/ordenes/${req.params.id}`);
