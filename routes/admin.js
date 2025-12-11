@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Producto = require('../models/Producto');
-const Orden = require('../models/Orden'); // Importamos el modelo de Ordenes
+const Orden = require('../models/Orden');
 const multer = require('multer');
 const path = require('path');
 
-// 1. Configuración Multer (Imágenes)
+// Configuración Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/images');
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// 2. Middleware de Seguridad
+// Middleware Seguridad
 const authMiddleware = (req, res, next) => {
     if (req.session && req.session.isAdmin) {
         return next();
@@ -30,92 +30,73 @@ const authMiddleware = (req, res, next) => {
     res.redirect('/admin/login');
 };
 
-// --- RUTAS DE ACCESO ---
-
-router.get('/login', (req, res) => {
-    res.render('admin/login', { error: null });
-});
-
+// Rutas Acceso
+router.get('/login', (req, res) => { res.render('admin/login', { error: null }); });
 router.post('/login', (req, res) => {
-    const { password } = req.body;
-    if (password === 'VikyBichinque2026!') {
+    if (req.body.password === 'VikyBichinque2026!') {
         req.session.isAdmin = true;
         res.redirect('/admin');
     } else {
         res.render('admin/login', { error: 'Contraseña incorrecta' });
     }
 });
-
 router.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
 
-// --- RUTAS PROTEGIDAS (PRODUCTOS) ---
-
-// Dashboard principal (Lista productos)
+// Rutas Productos
 router.get('/', authMiddleware, async (req, res) => {
-    try {
-        const productos = await Producto.findAll({ order: [['createdAt', 'DESC']] });
-        res.render('admin/dashboard', { productos });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error cargando panel');
-    }
+    const productos = await Producto.findAll({ order: [['createdAt', 'DESC']] });
+    res.render('admin/dashboard', { productos });
 });
-
 router.post('/crear', authMiddleware, async (req, res) => {
-    try {
-        await Producto.create(req.body);
-        res.redirect('/admin');
-    } catch (error) {
-        console.error(error);
-        res.send('Error al crear producto');
-    }
+    await Producto.create(req.body);
+    res.redirect('/admin');
 });
-
 router.post('/eliminar/:id', authMiddleware, async (req, res) => {
-    try {
-        await Producto.destroy({ where: { id: req.params.id } });
-        res.redirect('/admin');
-    } catch (error) {
-        console.error(error);
-        res.send('Error al eliminar producto');
-    }
-});
-
-// --- RUTAS PROTEGIDAS (IMÁGENES) ---
-
-router.post('/subir-logo', authMiddleware, upload.single('logo'), (req, res) => {
+    await Producto.destroy({ where: { id: req.params.id } });
     res.redirect('/admin');
 });
 
-router.post('/subir-banner', authMiddleware, upload.single('banner'), (req, res) => {
-    res.redirect('/admin');
-});
+// Rutas Imágenes
+router.post('/subir-logo', authMiddleware, upload.single('logo'), (req, res) => res.redirect('/admin'));
+router.post('/subir-banner', authMiddleware, upload.single('banner'), (req, res) => res.redirect('/admin'));
 
-// --- RUTAS PROTEGIDAS (ÓRDENES) ---
-
-// Ver listado de órdenes
+// RUTAS DE ÓRDENES
 router.get('/ordenes', authMiddleware, async (req, res) => {
+    const ordenes = await Orden.findAll({ order: [['createdAt', 'DESC']] });
+    res.render('admin/ordenes', { ordenes });
+});
+
+// RUTA NUEVA: Ver Detalle Orden
+router.get('/ordenes/:id', authMiddleware, async (req, res) => {
     try {
-        const ordenes = await Orden.findAll({ order: [['createdAt', 'DESC']] });
-        res.render('admin/ordenes', { ordenes });
+        const orden = await Orden.findByPk(req.params.id);
+        if (!orden) return res.redirect('/admin/ordenes');
+        
+        let detalleProductos = [];
+        try {
+            detalleProductos = typeof orden.detalle === 'string' ? JSON.parse(orden.detalle) : orden.detalle;
+        } catch (e) {
+            console.error("Error parseando detalle", e);
+        }
+        res.render('admin/orden_detalle', { orden, detalleProductos });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error cargando órdenes');
+        res.send('Error cargando detalle');
     }
 });
 
-// Cambiar estado de una orden
 router.post('/ordenes/estado/:id', authMiddleware, async (req, res) => {
-    try {
-        const { nuevoEstado } = req.body;
-        await Orden.update({ estado: nuevoEstado }, { where: { id: req.params.id } });
+    await Orden.update({ estado: req.body.nuevoEstado }, { where: { id: req.params.id } });
+    
+    // Si venimos del detalle, volvemos al detalle. Si no, a la lista.
+    const referer = req.get('Referer');
+    if (referer && referer.includes('/ordenes/')) {
+        res.redirect(`/admin/ordenes/${req.params.id}`);
+    } else {
         res.redirect('/admin/ordenes');
-    } catch (error) {
-        console.error(error);
-        res.send('Error actualizando estado');
     }
 });
 

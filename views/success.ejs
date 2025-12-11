@@ -4,32 +4,35 @@
     <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
         <i class="fas fa-check-circle" style="font-size: 4rem; color: #2ecc71; margin-bottom: 20px;"></i>
         <h1 style="color: var(--primary);">¡Gracias por tu compra!</h1>
-        <p>Tu orden #<strong><%= orden.id %></strong> ha sido registrada correctamente.</p>
+        <p>Tu orden #<strong><%= orden.id %></strong> ha sido registrada.</p>
         
         <% if (metodo === 'transferencia' || orden.metodoPago === 'transferencia') { %>
             <hr style="margin: 30px 0;">
-            <h3 style="color: var(--secondary);">Datos para el pago:</h3>
-            <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; text-align: left; margin: 20px 0;">
-                <p><strong>BROU Caja de Ahorro:</strong> 0000-123456-001</p>
-                <p><strong>MiDinero:</strong> 1234-5678-9012</p>
-                <p><strong>Titular:</strong> FB Informática</p>
-                <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">* Por favor envía el comprobante por WhatsApp.</p>
+            
+            <h3 style="color: var(--secondary); margin-bottom: 20px;">Datos para Depósito / Transferencia</h3>
+            
+            <div style="background: #f8f9fa; border: 2px dashed #ccc; padding: 25px; border-radius: 10px; text-align: left; margin: 0 auto; display: inline-block; min-width: 320px;">
+                <p style="margin-bottom: 10px;"><strong>Banco:</strong> Mi Dinero</p>
+                <p style="margin-bottom: 10px;"><strong>Cuenta:</strong> <span style="font-size: 1.3rem; font-weight: bold; color: #333;">2066802</span></p>
+                <p style="margin-bottom: 0;"><strong>Nombre:</strong> Maria Victoria Bichinque Fielitz</p>
             </div>
 
-            <a href="https://wa.me/59899860678?text=Hola,%20hice%20la%20compra%20#<%= orden.id %>.%20Adjunto%20comprobante.%20Soy%20<%= orden.nombre %>" 
+            <p style="margin-top: 25px; font-size: 0.95rem; color: #555;">
+                Por favor, envía el comprobante de pago a nuestro WhatsApp para procesar el envío.
+            </p>
+
+            <a href="https://wa.me/59899860678?text=Hola%20Fashion%20Store!%20Realic%C3%A9%20la%20compra%20%23<%= orden.id %>.%20Aqu%C3%AD%20env%C3%ADo%20el%20comprobante." 
                target="_blank" 
                class="btn" 
-               style="background-color: #25D366; color: white; display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px;">
-               <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i> Enviar Comprobante por WhatsApp
+               style="background-color: #25D366; color: white; display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; margin-top: 15px; font-size: 1.1rem; border-radius: 50px;">
+               <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i> Enviar Comprobante
             </a>
+        
         <% } else { %>
-            <p style="margin-top: 20px;">El pago se ha procesado exitosamente con Mercado Pago.</p>
-            <p>Te enviaremos los detalles del envío a tu celular: <%= orden.telefono %></p>
+            <p style="margin-top: 20px;">El pago se ha procesado exitosamente.</p>
+            <p>Nos pondremos en contacto contigo al: <strong><%= orden.telefono %></strong></p>
+            <a href="/" class="btn" style="margin-top: 20px;">Volver a la Tienda</a>
         <% } %>
-
-        <div style="margin-top: 40px;">
-            <a href="/" style="text-decoration: underline; color: var(--primary);">Volver al inicio</a>
-        </div>
     </div>
 </div>
 <%- include('partials/footer') %>
