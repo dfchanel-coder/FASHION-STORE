@@ -30,6 +30,10 @@ app.use((req, res, next) => {
     next();
 });
 
+// IMPORTAR MODELOS (CRUCIAL: Esto crea las tablas en la base de datos)
+require('./models/Producto');
+require('./models/Orden'); // <--- Agregamos esto para que se cree la tabla de pedidos
+
 // Rutas
 app.use('/', require('./routes/index'));
 app.use('/admin', require('./routes/admin'));

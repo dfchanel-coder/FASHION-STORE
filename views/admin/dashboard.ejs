@@ -5,18 +5,24 @@
         <a href="/admin/logout" class="btn" style="background: #333; font-size: 0.8rem;">Cerrar Sesión</a>
     </div>
 
+    <div style="margin: 20px 0;">
+        <a href="/admin/ordenes" class="btn" style="background-color: var(--secondary); display: block; text-align: center; padding: 15px; font-size: 1.1rem;">
+            <i class="fas fa-list-alt"></i> VER GESTIÓN DE ORDENES
+        </a>
+    </div>
+
     <div style="background: #fff0f5; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #ffdeeb;">
         <h3 style="color: var(--secondary);">🎨 Personalizar Diseño (Header)</h3>
         <div style="display: flex; gap: 30px; flex-wrap: wrap;">
             <form action="/admin/subir-logo" method="POST" enctype="multipart/form-data" style="flex: 1;">
                 <label style="font-weight: bold;">Subir Logo (logo.png)</label>
                 <input type="file" name="logo" accept="image/png, image/jpeg" required>
-                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem;">Actualizar Logo</button>
+                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem; margin-top: 5px;">Actualizar Logo</button>
             </form>
             <form action="/admin/subir-banner" method="POST" enctype="multipart/form-data" style="flex: 1;">
                 <label style="font-weight: bold;">Subir Banner (banner.png)</label>
                 <input type="file" name="banner" accept="image/png, image/jpeg" required>
-                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem;">Actualizar Banner</button>
+                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 0.8rem; margin-top: 5px;">Actualizar Banner</button>
             </form>
         </div>
     </div>
@@ -25,51 +31,66 @@
 
     <form action="/admin/crear" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
         <h3>Agregar Producto</h3>
-        <input type="text" name="modelo" placeholder="Modelo" required>
-        <input type="text" name="descripcion" placeholder="Descripción">
-        <div style="display: flex; gap: 10px;">
-            <input type="number" name="precio" step="0.01" placeholder="Precio" required>
-            <input type="number" name="stock" placeholder="Stock">
+        <div style="margin-bottom: 15px;">
+            <input type="text" name="modelo" placeholder="Modelo del producto" required style="margin-bottom: 10px;">
+            <textarea name="descripcion" placeholder="Descripción (opcional)" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
         </div>
-        <div style="display: flex; gap: 10px;">
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="number" name="precio" step="0.01" placeholder="Precio ($)" required>
+            <input type="number" name="stock" placeholder="Stock disponible">
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <input type="text" name="tamaño" placeholder="Tamaño (S, M, L...)">
             <select name="categoria" required>
+                <option value="" disabled selected>Categoría...</option>
                 <option value="ropa">Ropa</option>
                 <option value="juguete">Juguete</option>
                 <option value="electrodomesticos">Electrodomésticos</option>
                 <option value="otros">Otros</option>
             </select>
         </div>
+        
         <input type="text" name="imagenUrl" placeholder="URL de la imagen del producto">
-        <button type="submit" class="btn">Guardar Producto</button>
+        <button type="submit" class="btn" style="margin-top: 10px;">Guardar Producto</button>
     </form>
 
     <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
 
-    <h3>Inventario</h3>
-    <table style="width:100%; border-collapse: collapse;">
-        <thead>
-            <tr style="background: var(--primary); color: white;">
-                <th style="padding:10px;">Modelo</th>
-                <th>Cat</th>
-                <th>Precio</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% productos.forEach(p => { %>
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding:10px;"><%= p.modelo %></td>
-                    <td><%= p.categoria %></td>
-                    <td>$<%= p.precio %></td>
-                    <td style="text-align: center;">
-                        <form action="/admin/eliminar/<%= p.id %>" method="POST" onsubmit="return confirm('¿Borrar?');">
-                            <button style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">X</button>
-                        </form>
-                    </td>
+    <h3>Inventario de Productos</h3>
+    <div style="overflow-x: auto;">
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: var(--primary); color: white;">
+                    <th style="padding:10px;">Modelo</th>
+                    <th>Cat</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Acción</th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% productos.forEach(p => { %>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding:10px;">
+                            <%= p.modelo %>
+                            <div style="font-size: 0.8rem; color: #888;"><%= p.tamaño || '' %></div>
+                        </td>
+                        <td><%= p.categoria %></td>
+                        <td><%= p.stock %></td>
+                        <td>$<%= p.precio %></td>
+                        <td style="text-align: center;">
+                            <form action="/admin/eliminar/<%= p.id %>" method="POST" onsubmit="return confirm('¿Estás seguro de borrar <%= p.modelo %>?');">
+                                <button style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
 </div>
 <%- include('../partials/footer') %>

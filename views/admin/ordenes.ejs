@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+<div class="container admin-panel fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Gestión de Ordenes</h2>
+        <a href="/admin" class="btn" style="background: #777;">Volver al Dashboard</a>
+    </div>
+
+    <table style="width:100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <thead>
+            <tr style="background: var(--primary); color: white; text-align: left;">
+                <th style="padding: 15px;">ID</th>
+                <th style="padding: 15px;">Cliente</th>
+                <th style="padding: 15px;">Total</th>
+                <th style="padding: 15px;">Método</th>
+                <th style="padding: 15px;">Estado</th>
+                <th style="padding: 15px;">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% ordenes.forEach(orden => { %>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 15px;">#<%= orden.id %></td>
+                    <td style="padding: 15px;">
+                        <strong><%= orden.nombre %> <%= orden.apellido %></strong><br>
+                        <small><%= orden.ciudad %> - <%= orden.telefono %></small>
+                    </td>
+                    <td style="padding: 15px;">$<%= orden.total %></td>
+                    <td style="padding: 15px; text-transform: capitalize;"><%= orden.metodoPago %></td>
+                    <td style="padding: 15px;">
+                        <span style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; color: white; 
+                            background: <%= orden.estado === 'completado' ? '#2ecc71' : (orden.estado === 'cancelado' ? '#e74c3c' : '#f1c40f') %>">
+                            <%= orden.estado.toUpperCase() %>
+                        </span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <form action="/admin/ordenes/estado/<%= orden.id %>" method="POST">
+                            <select name="nuevoEstado" onchange="this.form.submit()" style="padding: 5px;">
+                                <option value="" disabled selected>Cambiar estado...</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="completado">Completado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+<%- include('../partials/footer') %>

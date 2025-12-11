@@ -1,19 +1,16 @@
-// routes/admin.js
 const express = require('express');
 const router = express.Router();
 const Producto = require('../models/Producto');
+const Orden = require('../models/Orden'); // Importamos el modelo de Ordenes
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
-// 1. Configuración para subir imágenes (Multer)
-// Guardará los archivos en 'public/images' con nombre fijo
+// 1. Configuración Multer (Imágenes)
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/images');
     },
     filename: function (req, file, cb) {
-        // Si el campo es 'logo', el archivo se llamará logo.png
         if (file.fieldname === 'logo') {
             cb(null, 'logo.png');
         } else if (file.fieldname === 'banner') {
@@ -25,8 +22,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// 2. Middleware de Seguridad (Bloqueo)
-// Si no puso la contraseña, lo manda al login
+// 2. Middleware de Seguridad
 const authMiddleware = (req, res, next) => {
     if (req.session && req.session.isAdmin) {
         return next();
@@ -34,17 +30,14 @@ const authMiddleware = (req, res, next) => {
     res.redirect('/admin/login');
 };
 
-// --- RUTAS PÚBLICAS DEL ADMIN (LOGIN) ---
+// --- RUTAS DE ACCESO ---
 
-// GET Login
 router.get('/login', (req, res) => {
     res.render('admin/login', { error: null });
 });
 
-// POST Login (Verificar contraseña)
 router.post('/login', (req, res) => {
     const { password } = req.body;
-    // Contraseña solicitada
     if (password === 'VikyBichinque2026!') {
         req.session.isAdmin = true;
         res.redirect('/admin');
@@ -53,33 +46,45 @@ router.post('/login', (req, res) => {
     }
 });
 
-// Logout
 router.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
 
-// --- RUTAS PROTEGIDAS (DASHBOARD) ---
+// --- RUTAS PROTEGIDAS (PRODUCTOS) ---
 
-// Dashboard Principal
+// Dashboard principal (Lista productos)
 router.get('/', authMiddleware, async (req, res) => {
-    const productos = await Producto.findAll({ order: [['createdAt', 'DESC']] });
-    res.render('admin/dashboard', { productos });
+    try {
+        const productos = await Producto.findAll({ order: [['createdAt', 'DESC']] });
+        res.render('admin/dashboard', { productos });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error cargando panel');
+    }
 });
 
-// Crear Producto
 router.post('/crear', authMiddleware, async (req, res) => {
-    await Producto.create(req.body);
-    res.redirect('/admin');
+    try {
+        await Producto.create(req.body);
+        res.redirect('/admin');
+    } catch (error) {
+        console.error(error);
+        res.send('Error al crear producto');
+    }
 });
 
-// Eliminar Producto
 router.post('/eliminar/:id', authMiddleware, async (req, res) => {
-    await Producto.destroy({ where: { id: req.params.id } });
-    res.redirect('/admin');
+    try {
+        await Producto.destroy({ where: { id: req.params.id } });
+        res.redirect('/admin');
+    } catch (error) {
+        console.error(error);
+        res.send('Error al eliminar producto');
+    }
 });
 
-// --- RUTAS PARA SUBIR LOGO Y BANNER ---
+// --- RUTAS PROTEGIDAS (IMÁGENES) ---
 
 router.post('/subir-logo', authMiddleware, upload.single('logo'), (req, res) => {
     res.redirect('/admin');
@@ -87,6 +92,31 @@ router.post('/subir-logo', authMiddleware, upload.single('logo'), (req, res) => 
 
 router.post('/subir-banner', authMiddleware, upload.single('banner'), (req, res) => {
     res.redirect('/admin');
+});
+
+// --- RUTAS PROTEGIDAS (ÓRDENES) ---
+
+// Ver listado de órdenes
+router.get('/ordenes', authMiddleware, async (req, res) => {
+    try {
+        const ordenes = await Orden.findAll({ order: [['createdAt', 'DESC']] });
+        res.render('admin/ordenes', { ordenes });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error cargando órdenes');
+    }
+});
+
+// Cambiar estado de una orden
+router.post('/ordenes/estado/:id', authMiddleware, async (req, res) => {
+    try {
+        const { nuevoEstado } = req.body;
+        await Orden.update({ estado: nuevoEstado }, { where: { id: req.params.id } });
+        res.redirect('/admin/ordenes');
+    } catch (error) {
+        console.error(error);
+        res.send('Error actualizando estado');
+    }
 });
 
 module.exports = router;
